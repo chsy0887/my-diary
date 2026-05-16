@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\chsy6\\\\workspace\\\\my-diary\" -ErrorAction SilentlyContinue | ForEach-Object { $_.Name })",
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(firebase deploy *)"
+    ]
+  }
+}

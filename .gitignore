@@ -1,0 +1,16 @@
+# API 키가 담긴 환경 변수 파일 - 절대 Git에 올리지 않음
+.env
+functions/.env
+
+# Node.js 의존성 폴더
+node_modules/
+functions/node_modules/
+
+# Firebase 디버그 로그
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
+
+# 운영체제 자동 생성 파일
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1161 @@
+/* ============================================================
+   style.css - 나의 일기장 스타일
+   전체적으로 따뜻하고 편안한 파스텔 보라/핑크 테마
+   ============================================================ */
+
+/* ---- CSS 변수: 색상과 크기를 한 곳에서 관리 ---- */
+:root {
+  --color-bg-from:    #f3e7ff;   /* 그라디언트 시작색 (연보라) */
+  --color-bg-to:      #ffe4f0;   /* 그라디언트 끝색 (연핑크) */
+  --color-primary:    #b39ddb;   /* 보라 포인트 */
+  --color-secondary:  #f48fb1;   /* 핑크 포인트 */
+  --color-white:      #ffffff;
+  --color-text:       #4a4a4a;   /* 기본 텍스트 */
+  --color-subtext:    #9e9e9e;   /* 보조 텍스트 */
+  --color-border:     #ede7f6;   /* 연한 보라 테두리 */
+  --color-danger:     #ef9a9a;   /* 삭제 버튼 색 */
+  --radius-card:      20px;
+  --shadow-card:      0 4px 20px rgba(179, 157, 219, 0.18);
+  --shadow-hover:     0 8px 30px rgba(179, 157, 219, 0.30);
+}
+
+/* ---- 기본 초기화 ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- 전체 배경: 파스텔 그라디언트 ---- */
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont,
+               'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background: linear-gradient(135deg, var(--color-bg-from), var(--color-bg-to));
+  min-height: 100vh;
+  color: var(--color-text);
+  line-height: 1.6;
+  padding-bottom: 60px; /* 하단 여유 공간 */
+}
+
+/* ---- 중앙 컨테이너 ---- */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ============================================================
+   헤더
+   ============================================================ */
+.app-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.app-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.today-date {
+  font-size: 15px;
+  color: var(--color-subtext);
+  font-weight: 400;
+}
+
+/* 동기화 상태 배지 */
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 8px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sync-badge--cloud {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.sync-badge--local {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.sync-badge--loading {
+  background: #f5f5f5;
+  color: #9e9e9e;
+}
+
+.sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   로그인 화면
+   ============================================================ */
+.login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.login-card {
+  background: var(--color-white);
+  border-radius: 28px;
+  box-shadow: 0 8px 40px rgba(179, 157, 219, 0.28);
+  padding: 48px 36px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+
+.login-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.login-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.login-desc {
+  font-size: 15px;
+  color: var(--color-subtext);
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--color-white);
+  border: 2px solid var(--color-border);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  margin-bottom: 20px;
+}
+
+.google-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.login-hint {
+  font-size: 13px;
+  color: var(--color-subtext);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   사용자 정보 바 (헤더 내)
+   ============================================================ */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 2px;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 3px 11px;
+  font-size: 12px;
+  color: var(--color-subtext);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.logout-btn:hover {
+  background: var(--color-bg-from);
+  color: var(--color-text);
+}
+
+/* ============================================================
+   공통 카드 스타일
+   ============================================================ */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  transition: box-shadow 0.2s ease;
+}
+
+/* ============================================================
+   일기 작성 카드
+   ============================================================ */
+.write-card {
+  margin-bottom: 32px;
+}
+
+/* ---- 섹션 레이블 (소제목) ---- */
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-subtext);
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ---- 기분 선택 영역 ---- */
+.mood-section {
+  margin-bottom: 20px;
+}
+
+.mood-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* 기분 버튼 기본 스타일 */
+.mood-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;         /* 원형 */
+  border: 2px solid var(--color-border);
+  background: #fafafa;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* 기분 버튼 호버 효과 */
+.mood-btn:hover {
+  transform: scale(1.15);
+  background: var(--color-bg-from);
+  border-color: var(--color-primary);
+}
+
+/* 기분 버튼 선택됨 상태 */
+.mood-btn.active {
+  background: #ede7f6;        /* 연보라 배경 */
+  border-color: var(--color-primary);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px rgba(179, 157, 219, 0.25);
+}
+
+/* ---- 텍스트 입력 영역 ---- */
+.diary-input-section {
+  margin-bottom: 20px;
+}
+
+.diary-textarea {
+  width: 100%;
+  min-height: 180px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--color-text);
+  resize: vertical;           /* 세로 방향만 리사이즈 허용 */
+  outline: none;
+  transition: border-color 0.2s ease;
+  background: #fdfcff;
+  line-height: 1.7;
+}
+
+/* 텍스트 입력창 포커스 시 테두리 강조 */
+.diary-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.15);
+}
+
+.diary-textarea::placeholder {
+  color: #c4b5d8;
+  font-size: 15px;
+}
+
+/* 글자 수 표시 */
+.char-count-wrap {
+  text-align: right;
+  font-size: 13px;
+  color: var(--color-subtext);
+  margin-top: 6px;
+}
+
+/* ---- 저장 버튼 ---- */
+.save-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: var(--color-white);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.save-btn:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   저장된 일기 목록 섹션
+   ============================================================ */
+.diary-list-section {
+  /* 목록 섹션은 카드 스타일 없이 여백만 */
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+/* 일기가 없을 때 안내 문구 */
+.empty-message {
+  text-align: center;
+  color: var(--color-subtext);
+  font-size: 15px;
+  padding: 40px 0;
+}
+
+/* 숨김 유틸리티 */
+.hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   일기 카드 (동적으로 생성됨)
+   ============================================================ */
+.diary-card {
+  background: var(--color-white);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  margin-bottom: 16px;
+  position: relative;         /* 삭제 버튼 절대 위치 기준 */
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.diary-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* 카드 상단: 날짜 + 기분 이모지 */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.card-mood {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.card-date {
+  font-size: 13px;
+  color: var(--color-subtext);
+  font-weight: 500;
+}
+
+.card-mood-label {
+  font-size: 12px;
+  color: var(--color-primary);
+  background: #f3e7ff;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* 카드 본문: 내용 미리보기 */
+.card-preview {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.65;
+  white-space: pre-wrap;      /* 줄바꿈 그대로 표시 */
+  word-break: break-all;
+}
+
+/* 삭제 버튼 (카드 우측 상단) */
+.delete-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--color-subtext);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.delete-btn:hover {
+  background: #ffebee;
+  color: #e53935;
+  border-color: var(--color-danger);
+}
+
+/* ============================================================
+   AI 분석하기 버튼
+   ============================================================ */
+.ai-btn {
+  width: 100%;
+  padding: 13px;
+  border: 2px solid var(--color-primary);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.ai-btn:hover {
+  background: #f3e7ff;
+}
+
+/* 분석 중일 때 버튼 비활성화 */
+.ai-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   AI 분석 결과 영역
+   ============================================================ */
+.ai-result-box {
+  background: #faf6ff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+/* 로딩 표시 */
+.ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-subtext);
+  font-size: 14px;
+  justify-content: center;
+  padding: 6px 0;
+}
+
+/* 회전하는 스피너 아이콘 */
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI 결과 제목 */
+.ai-result-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+}
+
+/* 감정 막대 목록 */
+.ai-emotions {
+  margin-bottom: 14px;
+}
+
+/* 감정 한 행: 이름 + 막대 + 퍼센트 */
+.emotion-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.emotion-name {
+  font-size: 13px;
+  color: var(--color-text);
+  width: 44px;
+  flex-shrink: 0;
+}
+
+/* 막대 배경 */
+.emotion-bar-wrap {
+  flex: 1;
+  background: var(--color-border);
+  border-radius: 99px;
+  height: 8px;
+  overflow: hidden;
+}
+
+/* 채워지는 막대 */
+.emotion-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.emotion-pct {
+  font-size: 12px;
+  color: var(--color-subtext);
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* 따뜻한 메시지 박스 */
+.ai-message-box {
+  background: var(--color-white);
+  border-left: 3px solid var(--color-secondary);
+  padding: 10px 14px;
+  border-radius: 0 10px 10px 0;
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+/* 한 줄 요약 */
+.ai-summary-box {
+  font-size: 13px;
+  color: var(--color-subtext);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============================================================
+   일기 카드 하단 AI 분석 결과 요약 (목록에서 표시)
+   ============================================================ */
+.card-ai {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.card-ai-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.3px;
+  margin-bottom: 5px;
+}
+
+.card-ai-summary {
+  font-size: 13px;
+  color: var(--color-primary);
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+.card-ai-message {
+  font-size: 13px;
+  color: var(--color-subtext);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   탭 메뉴 네비게이션
+   ============================================================ */
+.tab-nav {
+  display: flex;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 5px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-card);
+  gap: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 6px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-subtext);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* 선택된 탭 */
+.tab-btn.active {
+  background: white;
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(179, 157, 219, 0.2);
+}
+
+.tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--color-text);
+}
+
+/* ============================================================
+   캘린더 탭
+   ============================================================ */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.cal-nav-btn {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: white;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cal-nav-btn:hover {
+  background: #f3e7ff;
+  border-color: var(--color-primary);
+}
+
+/* 달력 7열 그리드 */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+/* 요일 헤더 */
+.cal-header {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-subtext);
+  padding: 6px 0 10px;
+}
+
+.cal-header.sun { color: #e57373; } /* 일: 빨강 */
+.cal-header.sat { color: #64b5f6; } /* 토: 파랑 */
+
+/* 날짜 셀 */
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  gap: 2px;
+  cursor: default;
+  min-height: 42px;
+}
+
+/* 일기가 있는 날짜: 연보라 배경 + 클릭 가능 */
+.cal-day.has-diary {
+  background: #f3e7ff;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.cal-day.has-diary:hover {
+  background: #e8d5ff;
+  transform: scale(1.08);
+}
+
+/* 오늘 날짜: 테두리 강조 */
+.cal-day.today {
+  border: 2px solid var(--color-primary);
+}
+
+/* 날짜 숫자 */
+.cal-num {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.cal-day.has-diary .cal-num {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* 일/토 날짜 색 */
+.cal-day.sunday  .cal-num { color: #e57373; }
+.cal-day.saturday .cal-num { color: #64b5f6; }
+
+/* 기분 이모지 (날짜 셀 아래쪽에 작게) */
+.cal-mood {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.cal-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-subtext);
+  margin-top: 16px;
+}
+
+/* ============================================================
+   통계 탭 - 요약 수치
+   ============================================================ */
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 18px 8px;
+}
+
+.stat-num {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--color-subtext);
+  margin-top: 4px;
+}
+
+/* ---- 기분 변화 그래프 카드 ---- */
+.chart-card {
+  margin-bottom: 16px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* 7일/30일 기간 선택 버튼 */
+.period-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.period-btn {
+  padding: 5px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 20px;
+  background: white;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--color-subtext);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.period-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.chart-wrap {
+  position: relative;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-wrap canvas {
+  width: 100% !important;
+}
+
+.chart-empty {
+  text-align: center;
+  color: var(--color-subtext);
+  font-size: 14px;
+  line-height: 1.7;
+  padding: 24px 0;
+}
+
+/* ---- 감정 TOP 3 카드 ---- */
+.card-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.card-section-sub {
+  font-size: 12px;
+  color: var(--color-subtext);
+  margin-bottom: 16px;
+}
+
+/* 감정 순위 행 */
+.top-emotion-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.top-emotion-rank {
+  font-size: 18px;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.top-emotion-name {
+  font-size: 14px;
+  color: var(--color-text);
+  width: 44px;
+  flex-shrink: 0;
+}
+
+.top-emotion-bar-wrap {
+  flex: 1;
+  background: var(--color-border);
+  border-radius: 99px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.top-emotion-bar {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  transition: width 0.6s ease;
+}
+
+.top-emotion-pct {
+  font-size: 13px;
+  color: var(--color-subtext);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.no-emotions-msg {
+  text-align: center;
+  color: var(--color-subtext);
+  font-size: 14px;
+  line-height: 1.7;
+  padding: 20px 0;
+}
+
+/* ============================================================
+   일기 상세 모달
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;                         /* top/right/bottom/left = 0 */
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.93); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #f5f5f5;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--color-subtext);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.modal-close:hover {
+  background: #eeeeee;
+}
+
+/* 모달 내부 일기 내용 */
+.modal-date {
+  font-size: 13px;
+  color: var(--color-subtext);
+  margin-bottom: 10px;
+}
+
+.modal-mood-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.modal-mood-emoji {
+  font-size: 28px;
+}
+
+.modal-mood-label {
+  font-size: 13px;
+  color: var(--color-primary);
+  background: #f3e7ff;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.modal-text {
+  font-size: 15px;
+  color: var(--color-text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 16px;
+}
+
+.modal-ai {
+  background: #faf6ff;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.modal-ai-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.modal-ai-summary {
+  font-size: 13px;
+  color: var(--color-text);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.modal-ai-message {
+  font-size: 13px;
+  color: var(--color-subtext);
+  line-height: 1.5;
+}
+
+/* 같은 날 여러 일기 구분선 */
+.modal-divider {
+  border: none;
+  border-top: 1px dashed var(--color-border);
+  margin: 18px 0;
+}
+
+/* ============================================================
+   반응형: 모바일 (480px 이하)
+   ============================================================ */
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .app-title {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .mood-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+  }
+
+  .diary-textarea {
+    min-height: 150px;
+    font-size: 15px;
+  }
+
+  .save-btn {
+    font-size: 15px;
+    padding: 13px;
+  }
+
+  .diary-card {
+    padding: 16px;
+  }
+
+  .card-mood {
+    font-size: 22px;
+  }
+
+  /* 탭 */
+  .tab-btn {
+    font-size: 11px;
+    padding: 9px 3px;
+  }
+
+  /* 달력 */
+  .cal-day {
+    min-height: 36px;
+  }
+
+  .cal-num {
+    font-size: 11px;
+  }
+
+  .cal-mood {
+    font-size: 12px;
+  }
+
+  /* 통계 */
+  .stats-summary {
+    gap: 8px;
+  }
+
+  .stat-num {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  .stat-box {
+    padding: 14px 6px;
+  }
+
+  /* 모달 */
+  .modal-card {
+    padding: 20px;
+    max-height: 88vh;
+  }
+}

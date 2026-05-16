@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 로그인한 사용자는 자신의 일기만 읽고 쓸 수 있음
+    match /users/{userId}/diaries/{diaryId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

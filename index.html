@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나의 일기장 📔</title>
+
+  <!-- Pretendard 폰트 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+  />
+  <!-- Chart.js: 통계 탭 꺾은선 그래프에 사용 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- Firebase SDK (인증 + Firestore 클라우드 동기화) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <!-- PWA: 앱 설치 매니페스트 -->
+  <link rel="manifest" href="/manifest.json" />
+  <!-- PWA: 브라우저 상단바 색상 (Android Chrome) -->
+  <meta name="theme-color" content="#b39ddb" />
+  <!-- PWA: iOS 홈 화면 추가 지원 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="마이 다이어리" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== 로그인 화면 (Firebase 미로그인 시 표시) ===== -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="login-emoji">📔</div>
+      <h1 class="login-title">나의 일기장</h1>
+      <p class="login-desc">매일의 감정을 기록하고<br>AI에게 분석받아보세요</p>
+      <button id="google-login-btn" class="google-btn">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Google로 시작하기
+      </button>
+      <p class="login-hint">로그인하면 모든 기기에서<br>일기를 볼 수 있어요 ☁️</p>
+    </div>
+  </div>
+
+  <div class="container hidden" id="app-container">
+
+    <!-- ===== 헤더: 앱 제목 + 오늘 날짜 ===== -->
+    <header class="app-header">
+      <h1 class="app-title">나의 일기장 📔</h1>
+      <p id="today-date" class="today-date">날짜 불러오는 중...</p>
+      <div id="user-info" class="user-info hidden">
+        <img id="user-avatar" class="user-avatar" src="" alt="프로필">
+        <span id="user-name" class="user-name"></span>
+        <button id="logout-btn" class="logout-btn">로그아웃</button>
+      </div>
+      <div id="sync-badge" class="sync-badge sync-badge--loading">
+        <span class="sync-dot"></span>
+        <span id="sync-text">연결 확인 중...</span>
+      </div>
+    </header>
+
+    <!-- ===== 탭 메뉴 (3개) ===== -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="diary">📝 오늘 일기</button>
+      <button class="tab-btn"        data-tab="calendar">📅 캘린더</button>
+      <button class="tab-btn"        data-tab="stats">📊 통계</button>
+    </nav>
+
+    <!-- ========================================================
+         [탭 1] 오늘 일기 - 기존 작성/목록 화면
+         ======================================================== -->
+    <div id="tab-diary" class="tab-content">
+
+      <!-- 일기 작성 카드 -->
+      <div class="card write-card">
+
+        <!-- 기분 선택 -->
+        <div class="mood-section">
+          <p class="section-label">오늘의 기분</p>
+          <div class="mood-buttons">
+            <button class="mood-btn" data-mood="😢" data-label="슬픔"  title="슬픔">😢</button>
+            <button class="mood-btn" data-mood="😕" data-label="우울"  title="우울">😕</button>
+            <button class="mood-btn" data-mood="😐" data-label="보통"  title="보통">😐</button>
+            <button class="mood-btn" data-mood="🙂" data-label="좋음"  title="좋음">🙂</button>
+            <button class="mood-btn" data-mood="😊" data-label="행복"  title="행복">😊</button>
+          </div>
+        </div>
+
+        <!-- 일기 텍스트 입력창 -->
+        <div class="diary-input-section">
+          <textarea
+            id="diary-input"
+            class="diary-textarea"
+            placeholder="오늘 하루는 어땠나요? 자유롭게 적어보세요 ✏️"
+            maxlength="2000"
+          ></textarea>
+          <p class="char-count-wrap">
+            <span id="char-count">0</span> / 2000자
+          </p>
+        </div>
+
+        <!-- AI 분석 버튼 -->
+        <button id="ai-btn" class="ai-btn">✨ AI 분석하기</button>
+
+        <!-- AI 분석 결과 영역 (초기에는 숨김) -->
+        <div id="ai-result-box" class="ai-result-box hidden">
+          <div id="ai-loading" class="ai-loading">
+            <span class="loading-spinner"></span>
+            <span>분석 중...</span>
+          </div>
+          <div id="ai-result-content" class="ai-result-content hidden">
+            <p class="ai-result-title">✨ AI 분석 결과</p>
+            <div id="ai-emotions" class="ai-emotions"></div>
+            <div id="ai-message" class="ai-message-box"></div>
+            <div id="ai-summary" class="ai-summary-box"></div>
+          </div>
+        </div>
+
+        <!-- 저장 버튼 -->
+        <button id="save-btn" class="save-btn">저장하기 💾</button>
+
+      </div><!-- /write-card -->
+
+      <!-- 저장된 일기 목록 -->
+      <section class="diary-list-section">
+        <h2 class="list-title">지난 일기들</h2>
+        <div id="diary-list"></div>
+        <p id="empty-message" class="empty-message">아직 저장된 일기가 없어요. 첫 일기를 써보세요! 🌱</p>
+      </section>
+
+    </div><!-- /tab-diary -->
+
+    <!-- ========================================================
+         [탭 2] 캘린더 - 월별 달력 + 기분 이모지 표시
+         ======================================================== -->
+    <div id="tab-calendar" class="tab-content hidden">
+      <div class="card calendar-card">
+
+        <!-- 월 이동 네비게이션 -->
+        <div class="cal-nav">
+          <button id="cal-prev" class="cal-nav-btn" aria-label="이전 달">‹</button>
+          <h3 id="cal-title" class="cal-title">2026년 5월</h3>
+          <button id="cal-next" class="cal-nav-btn" aria-label="다음 달">›</button>
+        </div>
+
+        <!-- 달력 그리드: JS가 날짜 셀을 추가함 (헤더 7개는 고정) -->
+        <div id="cal-grid" class="cal-grid">
+          <div class="cal-header sun">일</div>
+          <div class="cal-header">월</div>
+          <div class="cal-header">화</div>
+          <div class="cal-header">수</div>
+          <div class="cal-header">목</div>
+          <div class="cal-header">금</div>
+          <div class="cal-header sat">토</div>
+          <!-- 날짜 셀은 script.js의 renderCalendar()가 채워줌 -->
+        </div>
+
+        <p class="cal-hint">일기를 쓴 날짜를 클릭하면 내용을 볼 수 있어요</p>
+
+      </div>
+    </div><!-- /tab-calendar -->
+
+    <!-- ========================================================
+         [탭 3] 통계 - 그래프 + 감정 TOP 3
+         ======================================================== -->
+    <div id="tab-stats" class="tab-content hidden">
+
+      <!-- 요약 수치 카드 3개 -->
+      <div class="stats-summary">
+        <div class="stat-box card">
+          <p class="stat-num" id="stat-total">0</p>
+          <p class="stat-label">총 일기 수</p>
+        </div>
+        <div class="stat-box card">
+          <p class="stat-num" id="stat-streak">0</p>
+          <p class="stat-label">연속 작성일</p>
+        </div>
+        <div class="stat-box card">
+          <p class="stat-num" id="stat-ai-count">0</p>
+          <p class="stat-label">AI 분석 횟수</p>
+        </div>
+      </div>
+
+      <!-- 기분 변화 꺾은선 그래프 -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <p class="chart-title">기분 변화 그래프</p>
+          <div class="period-btns">
+            <button class="period-btn active" data-days="7">최근 7일</button>
+            <button class="period-btn"        data-days="30">최근 30일</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <!-- Chart.js가 여기에 그래프를 그림 -->
+          <canvas id="mood-chart"></canvas>
+          <!-- 데이터 부족 시 안내 문구 -->
+          <p id="chart-empty" class="chart-empty hidden">
+            아직 데이터가 부족해요.<br>일기를 더 작성하면 그래프가 나타나요! 📈
+          </p>
+        </div>
+      </div>
+
+      <!-- 자주 느낀 감정 TOP 3 (AI 분석 결과 기반) -->
+      <div class="card emotions-card">
+        <p class="card-section-title">자주 느낀 감정 TOP 3 ✨</p>
+        <p class="card-section-sub">AI 분석을 사용한 일기의 감정 통계</p>
+        <div id="top-emotions"></div>
+      </div>
+
+    </div><!-- /tab-stats -->
+
+  </div><!-- /container -->
+
+  <!-- ===== 일기 상세 모달 (캘린더에서 날짜 클릭 시 표시) ===== -->
+  <div id="diary-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close-btn">✕</button>
+      <!-- 일기 내용은 script.js의 openDiaryModal()이 채워줌 -->
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- PWA: 서비스 워커 등록 (오프라인 캐시 담당) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function (reg) {
+            console.log('[PWA] 서비스 워커 등록 성공:', reg.scope);
+          })
+          .catch(function (err) {
+            console.warn('[PWA] 서비스 워커 등록 실패:', err);
+          });
+      });
+    }
+  </script>
+
+  <!-- Firebase 설정값 (사용자가 직접 입력) -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "functions",
+  "description": "나의 일기장 - Claude AI 분석 API",
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^7.2.5"
+  },
+  "private": true
+}
