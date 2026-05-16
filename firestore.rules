@@ -5,5 +5,15 @@ service cloud.firestore {
     match /users/{userId}/diaries/{diaryId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // 골프 라운드 기록: 로그인한 사용자가 자신의 라운드만 읽기/쓰기/삭제 가능
+    match /rounds/{roundId} {
+      // 생성: 요청 데이터의 userId가 자신의 UID와 일치해야 함
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.userId;
+      // 읽기/수정/삭제: 문서의 userId가 자신의 UID와 일치해야 함
+      allow read, update, delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
   }
 }
